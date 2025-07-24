@@ -1,0 +1,38 @@
+body {
+  background: #121212;
+  color: #ededed;
+  font-family: 'Poppins', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  min-width: 250px;
+}
+.music-wrapper {
+  max-width: 340px;
+  margin: 36px auto 0 auto;
+  padding: 24px 16px 32px 16px;
+  background: #181818;
+  border-radius: 12px;
+  box-shadow: 0 2px 14px 0 #0004;
+  text-align: center;
+}
+.music-title {
+  font-size: 18px;
+  color: #1DB954;
+  font-weight: 600;
+  margin-bottom: 24px;
+  letter-spacing: 0.03em;
+}
+audio {
+  width: 100%;
+  margin-bottom: 16px;
+  outline: none;
+  accent-color: #1DB954;
+}
+.tip {
+  font-size: 12px;
+  color: #8b8b8b;
+  margin-top: 2px;
+  user-select: none;
+  font-weight: 400;
+}

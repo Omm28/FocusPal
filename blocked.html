@@ -1,74 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <title>Stay Focused! - FocusPal</title>
+    <meta charset="UTF-8" />
+    <title>Blocked by FocusPal</title>
     <style>
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
+        background: #121212;
+        color: #ededed;
+        font-family: "Poppins", "Segoe UI", Arial, sans-serif;
         margin: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .blocked-container {
+        background: #181818;
+        border-radius: 14px;
+        box-shadow: 0 2px 14px #0004;
+        padding: 38px 32px 30px 32px;
         text-align: center;
+        max-width: 95vw;
+        min-width: 300px;
       }
-      .container {
-        max-width: 500px;
-        padding: 40px;
+      .blocked-title {
+        color: #1db954;
+        font-size: 1.6rem;
+        letter-spacing: 0.02em;
+        font-weight: 600;
+        margin-bottom: 14px;
       }
-      .icon {
-        font-size: 80px;
-        margin-bottom: 20px;
+      .blocked-message {
+        font-size: 1.1rem;
+        margin-bottom: 18px;
+        color: #ededed;
       }
-      h1 {
-        font-size: 36px;
-        margin-bottom: 16px;
-      }
-      p {
-        font-size: 18px;
-        opacity: 0.9;
-        line-height: 1.6;
-        margin-bottom: 30px;
-      }
-      .motivational {
+      .blocked-quote {
+        color: #b3b3b3;
+        font-size: 1rem;
         font-style: italic;
-        opacity: 0.8;
-        margin-bottom: 30px;
+        margin: 24px 0 18px 0;
       }
-      .back-btn {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
+      .return-btn {
+        background: #1db954;
         border: none;
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-size: 16px;
+        color: #181818;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 10px 30px;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: background 0.15s;
+        box-shadow: 0 1px 4px #0002;
+        margin-top: 5px;
       }
-      .back-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: translateY(-2px);
+      .return-btn:hover {
+        background: #13c84c;
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="icon">🎯</div>
-      <h1>Stay Focused!</h1>
-      <p>
-        You're in a focus session right now. This site is temporarily blocked to
-        help you stay productive.
-      </p>
-
-      <p class="motivational">
-        "The successful warrior is the average person with laser-like focus." -
-        Bruce Lee
-      </p>
-
-      <button class="back-btn" onclick="history.back()">← Go Back</button>
+    <div class="blocked-container">
+      <div class="blocked-title">Stay Focused!</div>
+      <div class="blocked-message">
+        This site is blocked during your FocusPal session.<br />
+        Return to your work and crush your goals!
+      </div>
+      <div class="blocked-quote">
+        “Focus is more valuable than talent.”<br />— Anonymous
+      </div>
+      <button class="return-btn" onclick="history.back()">&larr; Back</button>
     </div>
   </body>
 </html>

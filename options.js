@@ -1,146 +1,73 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const newSiteInput = document.getElementById('newSiteInput');
-    const addSiteBtn = document.getElementById('addSiteBtn');
-    const sitesList = document.getElementById('sitesList');
-    const focusTime = document.getElementById('focusTime');
-    const breakTime = document.getElementById('breakTime');
-    const saveBtn = document.getElementById('saveBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    
-    // Load initial data
-    loadBlockedSites();
-    loadStats();
-    
-    // Event listeners
-    addSiteBtn.addEventListener('click', addSite);
-    newSiteInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') addSite();
+  const input = document.getElementById('addSiteInput');
+  const addBtn = document.getElementById('addSiteBtn');
+  const listElem = document.getElementById('blockList');
+
+  function siteRoot(domain) {
+    return domain.replace('*://*.', '').replace('*://', '').replace('/*', '');
+  }
+
+  function patternFor(domain) {
+    return [`*://${domain}/*`, `*://*.${domain}/*`];
+  }
+
+  function loadBlockList() {
+    chrome.storage.local.get('blockedSites', (result) => {
+      const patterns = result.blockedSites || [];
+      // Extract base domains (only show one per pair)
+      const uniqueRoots = [];
+      patterns.forEach(pattern => {
+        const rootPattern = pattern.replace('*://*.', '*://'); // Normalize wildcard to root
+        if (patterns.includes(rootPattern) && !uniqueRoots.includes(rootPattern)) {
+          uniqueRoots.push(rootPattern);
+        }
+      });
+      renderList(uniqueRoots.length ? uniqueRoots : patterns); // fallback for legacy entries
     });
-    saveBtn.addEventListener('click', saveSettings);
-    resetBtn.addEventListener('click', resetToDefaults);
-    
-    function loadBlockedSites() {
-        chrome.runtime.sendMessage({action: 'getBlockedSites'}, (response) => {
-            displaySites(response || []);
-        });
-    }
-    
-    function displaySites(sites) {
-        sitesList.innerHTML = '';
-        sites.forEach((site, index) => {
-            const siteElement = document.createElement('div');
-            siteElement.className = 'site-item';
-            
-            // Clean up the URL for display
-            const displayUrl = site.replace('*://*.', '').replace('/*', '');
-            
-            siteElement.innerHTML = `
-                <span class="site-url">${displayUrl}</span>
-                <button class="remove-btn" data-index="${index}">Remove</button>
-            `;
-            
-            sitesList.appendChild(siteElement);
-        });
-        
-        // Add event listeners to remove buttons
-        document.querySelectorAll('.remove-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const index = parseInt(e.target.dataset.index);
-                removeSite(index);
-            });
-        });
-    }
-    
-    function addSite() {
-        const url = newSiteInput.value.trim();
-        if (!url) return;
-        
-        // Format the URL properly
-        let formattedUrl = url.toLowerCase();
-        if (!formattedUrl.includes('.')) {
-            alert('Please enter a valid website URL (e.g., youtube.com)');
-            return;
-        }
-        
-        // Convert to the format Chrome expects
-        if (!formattedUrl.startsWith('*://')) {
-            formattedUrl = `*://*.${formattedUrl}/*`;
-        }
-        
-        chrome.runtime.sendMessage({action: 'getBlockedSites'}, (currentSites) => {
-            if (currentSites.includes(formattedUrl)) {
-                alert('This site is already blocked!');
-                return;
-            }
-            
-            const updatedSites = [...currentSites, formattedUrl];
-            chrome.runtime.sendMessage({
-                action: 'updateBlockedSites',
-                sites: updatedSites
-            }, () => {
-                newSiteInput.value = '';
-                displaySites(updatedSites);
-            });
-        });
-    }
-    
-    function removeSite(index) {
-        chrome.runtime.sendMessage({action: 'getBlockedSites'}, (currentSites) => {
-            const updatedSites = currentSites.filter((_, i) => i !== index);
-            chrome.runtime.sendMessage({
-                action: 'updateBlockedSites',
-                sites: updatedSites
-            }, () => {
-                displaySites(updatedSites);
-            });
-        });
-    }
-    
-    function loadStats() {
-        chrome.storage.local.get(['completedSessions', 'totalSessions'], (result) => {
-            document.getElementById('todaySessions').textContent = result.completedSessions || 0;
-            document.getElementById('totalSessions').textContent = result.totalSessions || 0;
-        });
-    }
-    
-    function saveSettings() {
-        const settings = {
-            focusTime: parseInt(focusTime.value),
-            breakTime: parseInt(breakTime.value)
-        };
-        
-        chrome.storage.local.set(settings, () => {
-            // Show success message
-            saveBtn.textContent = 'Saved!';
-            saveBtn.style.background = '#27ae60';
-            
-            setTimeout(() => {
-                saveBtn.textContent = 'Save Settings';
-                saveBtn.style.background = '#4CAF50';
-            }, 2000);
-        });
-    }
-    
-    function resetToDefaults() {
-        if (confirm('Are you sure you want to reset all settings to defaults?')) {
-            const defaultSites = [
-                '*://*.youtube.com/*',
-                '*://*.instagram.com/*',
-                '*://*.twitter.com/*',
-                '*://*.facebook.com/*',
-                '*://*.reddit.com/*',
-                '*://*.tiktok.com/*'
-            ];
-            
-            chrome.runtime.sendMessage({
-                action: 'updateBlockedSites',
-                sites: defaultSites
-            });
-            
-            focusTime.value = 25;
-            breakTime.value = 5;
-            
-            displaySites(defaultSites);
-        }
-    }
+  }
+
+  function renderList(basePatterns) {
+    listElem.innerHTML = '';
+    basePatterns.forEach((pattern, idx) => {
+      const siteClean = pattern.replace('*://', '').replace('/*', '');
+      const row = document.createElement('div');
+      row.className = 'site-row';
+      row.innerHTML = `
+        <span>${siteClean}</span>
+        <button data-idx="${idx}" title="Remove">&times;</button>`;
+      row.querySelector('button').onclick = () => removeSite(siteClean);
+      listElem.appendChild(row);
+    });
+  }
+
+  function addSite() {
+    const raw = input.value.trim()
+      .replace(/^(https?:\/\/)?(www\.)?/, '')
+      .replace(/\/.*/, '');
+    if (!raw) return;
+    chrome.storage.local.get('blockedSites', (result) => {
+      let sites = result.blockedSites || [];
+      const [base, wildcard] = patternFor(raw);
+      // Only add if base not already in
+      if (!sites.includes(base)) {
+        sites.push(base, wildcard);
+        chrome.storage.local.set({ blockedSites: sites }, loadBlockList);
+        input.value = '';
+      }
+    });
+  }
+
+  function removeSite(domain) {
+    chrome.storage.local.get('blockedSites', (result) => {
+      let sites = result.blockedSites || [];
+      const [base, wildcard] = patternFor(domain);
+      sites = sites.filter(s => s !== base && s !== wildcard);
+      chrome.storage.local.set({ blockedSites: sites }, loadBlockList);
+    });
+  }
+
+  addBtn.onclick = addSite;
+  input.addEventListener('keyup', e => { if (e.key === 'Enter') addSite(); });
+
+  loadBlockList();
 });

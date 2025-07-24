@@ -11,16 +11,12 @@
     "activeTab"
   ],
   "host_permissions": [
-    "*://*.youtube.com/*",
-    "*://*.instagram.com/*",
-    "*://*.twitter.com/*",
-    "*://*.facebook.com/*",
-    "*://*.reddit.com/*",
-    "*://*.tiktok.com/*"
+  "<all_urls>"
   ],
   "background": {
     "service_worker": "background.js"
   },
+  
   "action": {
     "default_popup": "popup.html"
   },
@@ -30,5 +26,8 @@
       "resources": ["blocked.html"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "content_security_policy": {
+  "extension_pages": "script-src 'self'; object-src 'self'; media-src *"
+  }
 }
