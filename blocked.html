@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Stay Focused! - FocusPal</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        text-align: center;
+      }
+      .container {
+        max-width: 500px;
+        padding: 40px;
+      }
+      .icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: 36px;
+        margin-bottom: 16px;
+      }
+      p {
+        font-size: 18px;
+        opacity: 0.9;
+        line-height: 1.6;
+        margin-bottom: 30px;
+      }
+      .motivational {
+        font-style: italic;
+        opacity: 0.8;
+        margin-bottom: 30px;
+      }
+      .back-btn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .back-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="icon">🎯</div>
+      <h1>Stay Focused!</h1>
+      <p>
+        You're in a focus session right now. This site is temporarily blocked to
+        help you stay productive.
+      </p>
+
+      <p class="motivational">
+        "The successful warrior is the average person with laser-like focus." -
+        Bruce Lee
+      </p>
+
+      <button class="back-btn" onclick="history.back()">← Go Back</button>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="css/popup.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🎯 FocusPal</h1>
+        <p>Your chill productivity assistant</p>
+      </div>
+
+      <div class="timer-section">
+        <div class="timer-display" id="timerDisplay">25:00</div>
+        <div class="session-info" id="sessionInfo">Ready to focus</div>
+      </div>
+
+      <div class="controls">
+        <button id="startBtn" class="btn primary">Start Focus</button>
+        <button id="pauseBtn" class="btn secondary" disabled>Pause</button>
+        <button id="resetBtn" class="btn secondary">Reset</button>
+      </div>
+
+      <div class="music-section">
+        <button id="musicToggle" class="btn music">🎵 Music Off</button>
+      </div>
+
+      <div class="stats">
+        <span id="completedSessions">Sessions Today: 0</span>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

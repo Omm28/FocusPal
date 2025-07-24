@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "FocusPal",
+  "version": "1.0.0",
+  "description": "Your chill productivity assistant with Pomodoro timer, website blocking, and lo-fi music",
+  "permissions": [
+    "storage",
+    "notifications",
+    "alarms",
+    "declarativeNetRequest",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "*://*.youtube.com/*",
+    "*://*.instagram.com/*",
+    "*://*.twitter.com/*",
+    "*://*.facebook.com/*",
+    "*://*.reddit.com/*",
+    "*://*.tiktok.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "web_accessible_resources": [
+    {
+      "resources": ["blocked.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
