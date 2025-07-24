@@ -2,35 +2,47 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="css/popup.css" />
   </head>
   <body>
-    <div class="container">
+    <div class="spotify-popup">
       <div class="header">
-        <h1>🎯 FocusPal</h1>
-        <p>Your chill productivity assistant</p>
+        <h1 class="app-title">FocusPal</h1>
       </div>
-
-      <div class="timer-section">
+      <div class="session-section">
+        <div class="session-type" id="sessionType">Focus Session</div>
         <div class="timer-display" id="timerDisplay">25:00</div>
-        <div class="session-info" id="sessionInfo">Ready to focus</div>
       </div>
-
       <div class="controls">
-        <button id="startBtn" class="btn primary">Start Focus</button>
-        <button id="pauseBtn" class="btn secondary" disabled>Pause</button>
-        <button id="resetBtn" class="btn secondary">Reset</button>
+        <button id="startBtn" class="control-btn primary">
+          <span class="btn-icon">▶</span>
+        </button>
+        <button id="skipBtn" class="control-btn secondary">
+          <span class="btn-icon">⏭</span>
+        </button>
+        <button id="resetBtn" class="control-btn secondary">
+          <span class="btn-icon">⏹</span>
+        </button>
       </div>
-
-      <div class="music-section">
-        <button id="musicToggle" class="btn music">🎵 Music Off</button>
+      <div class="music-bar">
+        <span class="music-label">Music</span>
+        <button id="musicToggle" class="music-btn">
+          <span id="musicStatus">Off</span>
+        </button>
       </div>
-
-      <div class="stats">
-        <span id="completedSessions">Sessions Today: 0</span>
+      <div class="bottom-section">
+        <div class="streak-count">
+          <span class="streak-number" id="streakCount">0</span>
+          <span class="streak-label">sessions</span>
+        </div>
+        <button class="settings-btn" id="settingsBtn">⚙</button>
       </div>
+      <footer class="footer-quote">Stay focused, stay productive</footer>
     </div>
-
     <script src="popup.js"></script>
   </body>
 </html>
