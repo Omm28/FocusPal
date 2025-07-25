@@ -11,9 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const musicStatus = document.getElementById('musicStatus');
 
     let appState = null;
-    let musicManuallyPaused = false; // track manual toggle state
+    let musicManuallyPaused = false;
 
-    // Main Pomodoro logic
+    // Pomodoro controls
     startBtn.addEventListener('click', () => {
         if (appState && appState.isRunning) {
             chrome.runtime.sendMessage({ action: 'pauseTimer' }, refreshState);
@@ -21,26 +21,22 @@ document.addEventListener('DOMContentLoaded', function() {
             chrome.runtime.sendMessage({ action: 'startTimer' }, refreshState);
         }
     });
-
     skipBtn.addEventListener('click', () => {
         chrome.runtime.sendMessage({ action: 'forceSessionEnd' }, refreshState);
     });
-
     resetBtn.addEventListener('click', () => {
         chrome.runtime.sendMessage({ action: 'resetTimer' }, refreshState);
     });
-
     settingsBtn.addEventListener('click', () => {
         chrome.runtime.openOptionsPage();
     });
-
     if (openMusicBtn) {
         openMusicBtn.addEventListener('click', () => {
             chrome.tabs.create({ url: chrome.runtime.getURL('music.html') });
         });
     }
 
-    // Music toggle controls playback in the music tab
+    // Music control from popup (pause/unpause)
     if (musicToggle && musicStatus) {
         musicToggle.addEventListener('click', () => {
             musicManuallyPaused = !musicManuallyPaused;
@@ -51,33 +47,54 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             });
-            // Update button text
             musicStatus.textContent = musicManuallyPaused ? 'Play' : 'Pause';
         });
     }
 
-    // Sync UI with state
-    function refreshState() {
-        chrome.runtime.sendMessage({ action: 'getState' }, updateUI);
-    }
-
-    chrome.runtime.onMessage.addListener((request) => {
+    // --- Listen for background/app state and option changes ---
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (
-            ['timerStarted', 'timerPaused', 'timerReset', 'sessionComplete', 'timerUpdate']
-                .includes(request.action)
+            request.action === 'optionsChanged' ||
+            ['timerStarted', 'timerPaused', 'timerReset', 'sessionComplete', 'timerUpdate'].includes(request.action)
         ) {
             refreshState();
         }
     });
 
+    
+
+    // --- Main: load the timer state or correct defaults every time popup opens ---
+    function refreshState() {
+        chrome.runtime.sendMessage({ action: 'getState' }, function(state) {
+            // If state is fake/blank/0, recover from saved settings
+            if (!state || typeof state.timeLeft !== "number" || state.timeLeft < 1) {
+                chrome.storage.local.get(['focusTime', 'breakTime'], (result) => {
+                    const isFocus = !state || !state.currentSession || state.currentSession === "focus";
+                    const mins = isFocus
+                        ? (parseInt(result.focusTime) || 25)
+                        : (parseInt(result.breakTime) || 5);
+                    updateTimerDisplay(mins * 60);
+                    // Set UI to idle state if desired
+                    sessionType.textContent = isFocus ? 'Focus Session' : 'Break Time';
+                    startBtn.innerHTML = '<span class="btn-icon">▶</span>';
+                    startBtn.title = "Start";
+                    // Update streak count from storage
+                    chrome.storage.local.get(['streak'], (res) => {
+                        if (streakCount) streakCount.textContent = res.streak || 0;
+                    });
+                });
+            } else {
+                updateUI(state);
+            }
+        });
+    }
+
     function updateUI(state) {
         if (!state) return;
         appState = state;
-
         updateTimerDisplay(state.timeLeft);
         sessionType.textContent = state.currentSession === 'focus' ? 'Focus Session' : 'Break Time';
-
-        // Toggle Start/Pause button icon and tooltip based on status
+        // Toggle Start/Pause button icon and tooltip
         if (state.isRunning) {
             startBtn.innerHTML = '<span class="btn-icon">⏸</span>';
             startBtn.title = "Pause";
@@ -85,8 +102,10 @@ document.addEventListener('DOMContentLoaded', function() {
             startBtn.innerHTML = '<span class="btn-icon">▶</span>';
             startBtn.title = "Start";
         }
-
-        streakCount.textContent = state.completedSessions || 0;
+        // Fetch streak from storage on update
+        chrome.storage.local.get(['streak'], (result) => {
+            if (streakCount) streakCount.textContent = result.streak || 0;
+        });
     }
 
     function updateTimerDisplay(timeLeft) {
@@ -95,5 +114,6 @@ document.addEventListener('DOMContentLoaded', function() {
         timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
 
+    // ---- Initial load ----
     refreshState();
 });
