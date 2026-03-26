@@ -1,6 +1,6 @@
 # FocusPal
 
-**FocusPal** is a productivity Chrome/Brave extension that helps you stay focused and overcome distractions using the Pomodoro technique. It features automated session cycling, built-in site blocking, motivational notifications, and live stats for streaks and productivity — all in a privacy-friendly, user-driven package.
+**FocusPal** is a WORK IN PROGRESS productivity Chrome/Brave extension that helps you stay focused and overcome distractions using the Pomodoro technique. It features automated session cycling, built-in site blocking, motivational notifications, and live stats for streaks and productivity — all in a privacy-friendly, user-driven package.
 
 ---
 
